@@ -34,3 +34,20 @@
     (let ((token-data (unwrap! (map-get? identity-data token-id)
             err-invalid-user)))
         (is-eq (get owner token-data) tx-sender)))
+
+;; Public Functions
+(define-public (create-identity (hash (string-ascii 64)))
+    (let ((token-id (+ (default-to u0 (map-get? user-identity tx-sender)) u1)))
+        (begin
+            (try! (nft-mint? digital-identity token-id tx-sender))
+            (map-set identity-data token-id
+                {
+                    owner: tx-sender,
+                    verified: false,
+                    hash: hash,
+                    timestamp: block-height,
+                    kyc-level: u0
+                })
+            (map-set user-identity tx-sender token-id)
+            (ok token-id))))
+
