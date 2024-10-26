@@ -24,3 +24,13 @@
 (define-map user-identity
     principal
     uint)
+
+
+;; Private Functions
+(define-private (is-contract-owner)
+    (is-eq tx-sender contract-owner))
+
+(define-private (is-token-owner (token-id uint))
+    (let ((token-data (unwrap! (map-get? identity-data token-id)
+            err-invalid-user)))
+        (is-eq (get owner token-data) tx-sender)))
