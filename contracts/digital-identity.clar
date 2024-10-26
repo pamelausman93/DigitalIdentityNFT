@@ -65,3 +65,17 @@
                     timestamp: block-height
                 }))
             (ok true))))
+
+(define-public (verify-identity 
+    (token-id uint)
+    (kyc-level uint))
+    (begin
+        (asserts! (is-contract-owner) err-owner-only)
+        (let ((current-data (unwrap! (map-get? identity-data token-id)
+                err-invalid-user)))
+            (map-set identity-data token-id
+                (merge current-data {
+                    verified: true,
+                    kyc-level: kyc-level
+                }))
+            (ok true))))
