@@ -51,3 +51,17 @@
             (map-set user-identity tx-sender token-id)
             (ok token-id))))
 
+
+(define-public (update-identity-data
+    (token-id uint)
+    (new-hash (string-ascii 64)))
+    (begin
+        (asserts! (is-token-owner token-id) err-not-token-owner)
+        (let ((current-data (unwrap! (map-get? identity-data token-id)
+                err-invalid-user)))
+            (map-set identity-data token-id
+                (merge current-data {
+                    hash: new-hash,
+                    timestamp: block-height
+                }))
+            (ok true))))
