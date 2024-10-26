@@ -66,7 +66,7 @@
                 }))
             (ok true))))
 
-(define-public (verify-identity 
+(define-public (verify-identity
     (token-id uint)
     (kyc-level uint))
     (begin
@@ -79,3 +79,20 @@
                     kyc-level: kyc-level
                 }))
             (ok true))))
+
+;; Read-Only Functions
+(define-read-only (get-identity-data (token-id uint))
+    (map-get? identity-data token-id))
+
+(define-read-only (get-user-identity (user principal))
+    (map-get? user-identity user))
+
+(define-read-only (is-identity-verified (token-id uint))
+    (let ((data (unwrap! (map-get? identity-data token-id)
+            err-invalid-user)))
+        (get verified data)))
+
+(define-read-only (get-kyc-level (token-id uint))
+    (let ((data (unwrap! (map-get? identity-data token-id)
+            err-invalid-user)))
+        (get kyc-level data)))
